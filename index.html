@@ -10,6 +10,9 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Inter","Helvetica Neue",Arial,sans-serif}
 .w{max-width:1120px;margin:0 auto;padding:0 20px}
+body{min-height:100vh;display:flex;flex-direction:column}
+body>.w{flex:1 0 auto;width:100%}
+footer{margin-top:auto}
 header{border-bottom:1px solid var(--line)}
 header .w{display:flex;align-items:center;gap:10px;height:56px}
 .logo{width:26px;height:26px;background:var(--lime);border:1px solid var(--ink);border-radius:var(--r);display:grid;place-items:center;font-weight:800;font-size:13px}
