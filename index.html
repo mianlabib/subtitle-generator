@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Subtitle Studio · Developed by AI with Labib</title>
+<style>
+:root{--bg:#F4F2E8;--card:#FFFEF8;--ink:#171714;--mut:#77766D;--line:#AAA99D;--lime:#D7FF3F;--char:#171715;--r:6px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Inter","Helvetica Neue",Arial,sans-serif}
+.w{max-width:1120px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+header .w{display:flex;align-items:center;gap:10px;height:56px}
+.logo{width:26px;height:26px;background:var(--lime);border:1px solid var(--ink);border-radius:var(--r);display:grid;place-items:center;font-weight:800;font-size:13px}
+.brand{font-weight:700;letter-spacing:-.01em;font-size:15px}
+.by{font-size:12px;color:var(--mut);margin-left:2px}
+header .sp{flex:1}
+.badge{display:inline-block;background:var(--lime);color:var(--ink);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;letter-spacing:.02em}
+button{font:inherit;font-weight:600;cursor:pointer;border-radius:var(--r);padding:8px 14px;border:1px solid var(--ink);background:var(--lime);color:var(--ink);transition:background .12s}
+button:hover:not(:disabled){background:#c8f024}
+button.sec{background:transparent}button.sec:hover:not(:disabled){background:#ebe8da}
+button.dark{background:var(--ink);color:var(--bg)}button.dark:hover:not(:disabled){background:#33332d}
+button:disabled{opacity:.4;cursor:not-allowed}
+main{padding:22px 0 40px;display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.eye{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+#drop{border:1px dashed var(--line);border-radius:var(--r);padding:24px 12px;text-align:center;cursor:pointer;color:var(--mut)}
+#drop:hover,#drop.on{border-color:var(--ink);background:#faf8ec;color:var(--ink)}
+#drop b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:2px}
+#fname{margin:10px 0 0;font-weight:600;font-size:13px;word-break:break-all}
+#media{width:100%;margin-top:12px;max-height:260px;background:#000;border-radius:var(--r)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12px;color:var(--mut)}
+.row{display:flex;gap:8px}.row #go{flex:1}
+progress{width:100%;height:5px;margin-top:12px;accent-color:#171714}
+#status{margin:10px 0 0;font-size:13px;color:var(--mut)}#status.err{color:#a3261c}#status.ok{color:var(--ink);font-weight:600}
+.empty{text-align:center;color:var(--mut);padding:56px 16px}.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;background:var(--bg)}
+.st{padding:10px 12px;border-right:1px solid var(--line)}.st:last-child{border:0}
+.st b{display:block;font-size:19px;letter-spacing:-.02em}.st span{font-size:11.5px;color:var(--mut)}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.st:nth-child(2){border-right:0}.st:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid var(--lime);outline-offset:0;border-color:var(--ink)}
+.tools input{flex:1;min-width:140px;width:auto}
+.tw{max-height:500px;overflow:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);text-align:left;padding:8px 10px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line)}
+td{padding:7px 10px;border-bottom:1px solid #d9d7ca;vertical-align:top}tr:last-child td{border:0}
+tr.act td{background:var(--lime)}
+td.n{width:34px;color:var(--mut)}
+td.t{width:96px;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:12.5px;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+td.t:hover{text-decoration-color:var(--ink)}
+td[contenteditable]{border-radius:4px}td[contenteditable]:focus{outline:2px solid var(--ink);background:var(--card)}
+td.x{width:30px;text-align:center}td.x button{border:0;background:none;color:var(--mut);padding:0 6px;font-size:17px}td.x button:hover{color:#a3261c;background:none!important}
+.hint{font-size:12px;color:var(--mut);margin-top:8px}
+.f{margin-bottom:12px}.f label{display:block;font-weight:600;font-size:12.5px;margin-bottom:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kr{display:flex;gap:6px}.kr button{white-space:nowrap}
+.chk{display:flex;gap:7px;align-items:center;font-size:12.5px;color:var(--mut);margin-top:6px}.chk input{width:auto}
+dialog{border:1px solid var(--ink);border-radius:var(--r);background:var(--card);color:var(--ink);padding:0;width:min(440px,92vw);box-shadow:none}
+dialog::backdrop{background:rgba(23,23,20,.45)}
+.dh{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}.dh b{font-size:15px;flex:1}
+.dh button{border:0;background:none;font-size:20px;padding:0 4px}
+.db{padding:18px}.df{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--bg)}
+footer{background:var(--char);color:#b9b8ac;padding:18px 0;font-size:12.5px}
+footer .w{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer b{color:var(--lime)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--lime);padding:9px 16px;border-radius:var(--r);opacity:0;transition:.2s;pointer-events:none;font-weight:600}
+#toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <div class="logo">S</div><span class="brand">Subtitle Studio</span><span class="by">Developed by AI with Labib</span>
+  <span class="sp"></span>
+  <button class="sec" id="open">⚙ Settings</button>
+</div></header>
+
+<div class="w"><main>
+<section>
+  <div class="card">
+    <p class="eye">1 · Source</p>
+    <div id="drop"><b>Drop a file here</b>or click to browse · MP3, WAV, M4A, MP4, MKV
+      <input id="file" type="file" accept="audio/*,video/*,.mkv,.m4a,.mp3,.wav,.mp4,.mov,.webm" hidden></div>
+    <p id="fname"></p><video id="media" controls hidden></video>
+  </div>
+  <div class="card">
+    <p class="eye">2 · Generate <button class="sec" id="open2" style="margin-left:auto;padding:2px 9px;font-size:12px">Change settings</button></p>
+    <div class="chips" id="chips"></div>
+    <div class="row"><button id="go" disabled>Generate subtitles</button><button class="sec" id="stop" disabled>Cancel</button></div>
+    <progress id="bar" hidden max="100" value="0"></progress>
+    <p id="status"></p>
+  </div>
+</section>
+
+<section>
+  <div class="card" id="empty"><div class="empty"><b>No subtitles yet</b>Add a file and press Generate. Your subtitles will appear here.</div></div>
+  <div class="card" id="out" hidden>
+    <p class="eye">3 · Review &amp; export <span class="badge">EDITABLE</span></p>
+    <div class="stats">
+      <div class="st"><b id="s1">0</b><span>Subtitles</span></div><div class="st"><b id="s2">0</b><span>Words</span></div>
+      <div class="st"><b id="s3">0:00</b><span>Duration</span></div><div class="st"><b id="s4">–</b><span>Language</span></div>
+    </div>
+    <div class="tools">
+      <input id="q" placeholder="Search in subtitles…">
+      <button id="srt">Download .srt</button><button class="sec" id="vtt">.vtt</button>
+      <button class="sec" id="txt">.txt</button><button class="sec" id="copy">Copy text</button>
+    </div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Start</th><th>Text</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="hint">Click a timestamp to jump in the player. Click any text to edit it.</div>
+  </div>
+</section>
+</main></div>
+
+<footer><div class="w"><span>Files go straight from your browser to Deepgram. Deepgram transcribes only; it does not translate.</span><span>Developed by <b>AI with Labib</b></span></div></footer>
+
+<dialog id="dlg">
+  <div class="dh"><b>Settings</b><button id="x" aria-label="Close">×</button></div>
+  <div class="db">
+    <div class="f"><label for="key">Deepgram API key</label>
+      <div class="kr"><input id="key" type="password" placeholder="Paste your API key" autocomplete="off"><button class="sec" id="eye" type="button">Show</button></div>
+      <label class="chk"><input type="checkbox" id="rem" checked> Remember on this device</label></div>
+    <div class="f"><label for="lang">Spoken language</label>
+      <select id="lang"><option value="auto">Auto-detect</option>
+        <option value="en">English</option><option value="ru">Russian</option><option value="hi">Hindi</option><option value="ur">Urdu</option>
+        <option value="ar">Arabic</option><option value="tr">Turkish</option><option value="es">Spanish</option><option value="fr">French</option>
+        <option value="de">German</option><option value="pt">Portuguese</option><option value="it">Italian</option><option value="nl">Dutch</option>
+        <option value="ja">Japanese</option><option value="ko">Korean</option><option value="zh">Chinese</option></select></div>
+    <div class="f"><label for="model">Model</label>
+      <select id="model"><option value="nova-2" selected>Nova-2 · wider language support</option><option value="nova-3">Nova-3 · most accurate</option></select></div>
+    <div class="f two">
+      <div><label for="maxc">Max characters</label><input id="maxc" type="number" value="42" min="15" max="120"></div>
+      <div><label for="maxd">Max seconds</label><input id="maxd" type="number" value="6" min="2" max="15" step="0.5"></div></div>
+  </div>
+  <div class="df"><button class="sec" id="cancel">Cancel</button><button id="saveset">Save settings</button></div>
+</dialog>
+<div id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let file=null,xhr=null,subs=[],meta={},url=null;
+const IDS=['lang','model','maxc','maxd'];
+try{const s=JSON.parse(localStorage.getItem('ss_cfg')||'{}');IDS.forEach(i=>{if(s[i])$(i).value=s[i]});if(s.key)$('key').value=s.key}catch(e){}
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2000)}
+function status(m,c=''){const s=$('status');s.textContent=m;s.className=c}
+function chips(){
+  const l=$('lang').selectedOptions[0].text,m=$('model').value;
+  $('chips').innerHTML='';
+  [l,m,$('maxc').value+' chars',$('maxd').value+' s max',$('key').value?'Key set':'No key'].forEach(t=>{const c=document.createElement('span');c.className='chip';c.textContent=t;$('chips').appendChild(c)});
+}
+chips();
+const dlg=$('dlg');
+const openSet=()=>dlg.showModal();
+$('open').onclick=openSet;$('open2').onclick=openSet;
+$('x').onclick=$('cancel').onclick=()=>dlg.close();
+$('eye').onclick=()=>{const k=$('key'),h=k.type==='password';k.type=h?'text':'password';$('eye').textContent=h?'Hide':'Show'};
+$('saveset').onclick=()=>{
+  try{const o={};IDS.forEach(i=>o[i]=$(i).value);if($('rem').checked)o.key=$('key').value.trim();localStorage.setItem('ss_cfg',JSON.stringify(o))}catch(e){}
+  chips();dlg.close();toast('Settings saved');
+};
+
+const drop=$('drop');
+drop.onclick=()=>$('file').click();
+$('file').onchange=e=>setFile(e.target.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('on')};
+drop.ondragleave=()=>drop.classList.remove('on');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('on');setFile(e.dataTransfer.files[0])};
+function setFile(f){
+  if(!f)return;file=f;$('fname').textContent=f.name+' · '+(f.size/1048576).toFixed(1)+' MB';
+  if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(f);
+  $('media').src=url;$('media').hidden=false;$('go').disabled=false;
+}
+
+const pad=(n,l=2)=>String(n).padStart(l,'0');
+function ts(t,sep=','){const ms=Math.round(t*1000),h=Math.floor(ms/36e5),m=Math.floor(ms/6e4)%60,s=Math.floor(ms/1e3)%60;return `${pad(h)}:${pad(m)}:${pad(s)}${sep}${pad(ms%1000,3)}`}
+const clock=t=>{t=Math.round(t);return Math.floor(t/60)+':'+pad(t%60)};
+
+function split(words,mc,md){
+  const out=[];let cur=[];
+  const txt=a=>a.map(w=>w.punctuated_word||w.word).join(' ');
+  const flush=()=>{if(cur.length){out.push({s:cur[0].start,e:cur[cur.length-1].end,t:txt(cur)});cur=[]}};
+  for(const w of words){
+    if(cur.length&&w.start-cur[cur.length-1].end>1.2)flush();
+    cur.push(w);const t=txt(cur);
+    if((t.length>=mc&&/[.!?,;:،۔؟]$/.test(t))||t.length>=mc*1.6||w.end-cur[0].start>=md)flush();
+  }
+  flush();return out;
+}
+
+$('go').onclick=()=>{
+  const key=$('key').value.trim();
+  if(!key){status('Add your Deepgram API key in Settings first.','err');openSet();return}
+  const lang=$('lang').value;
+  const q=new URLSearchParams({model:$('model').value,smart_format:'true',punctuate:'true'});
+  lang==='auto'?q.set('detect_language','true'):q.set('language',lang);
+  xhr=new XMLHttpRequest();
+  xhr.open('POST','https://api.deepgram.com/v1/listen?'+q);
+  xhr.setRequestHeader('Authorization','Token '+key);
+  xhr.setRequestHeader('Content-Type',file.type||'application/octet-stream');
+  const bar=$('bar');bar.hidden=false;bar.value=0;$('go').disabled=true;$('stop').disabled=false;status('Uploading…');
+  const done=()=>{$('go').disabled=false;$('stop').disabled=true;bar.hidden=true};
+  xhr.upload.onprogress=e=>{if(e.lengthComputable){bar.value=e.loaded/e.total*100;status('Uploading… '+Math.round(e.loaded/e.total*100)+'%')}};
+  xhr.upload.onload=()=>{bar.removeAttribute('value');status('Transcribing… this can take a moment.')};
+  xhr.onerror=()=>{done();status('Network error. Check your internet connection and API key.','err')};
+  xhr.onabort=()=>{done();status('Cancelled.')};
+  xhr.onload=()=>{
+    done();let j;
+    try{j=JSON.parse(xhr.responseText)}catch(e){status('Unexpected response from Deepgram.','err');return}
+    if(xhr.status!==200){status('Error '+xhr.status+': '+(xhr.status===401||xhr.status===403?'Invalid API key or no permission.':(j.err_msg||j.error||j.message||'Request failed')),'err');return}
+    const ch=j.results.channels[0],words=ch.alternatives[0].words||[];
+    if(!words.length){status('No speech was detected in this file.','err');return}
+    subs=split(words,+$('maxc').value||42,+$('maxd').value||6);
+    meta={words:words.length,dur:(j.metadata&&j.metadata.duration)||words[words.length-1].end,lang:ch.detected_language||(lang==='auto'?'–':lang)};
+    render();status('Done. '+subs.length+' subtitles generated.','ok');toast('Subtitles ready');
+  };
+  xhr.send(file);
+};
+$('stop').onclick=()=>xhr&&xhr.abort();
+
+function render(){
+  $('empty').hidden=true;$('out').hidden=false;
+  $('s2').textContent=meta.words;$('s3').textContent=clock(meta.dur);$('s4').textContent=String(meta.lang).toUpperCase();
+  const tb=$('rows');tb.innerHTML='';
+  subs.forEach(s=>{
+    const tr=document.createElement('tr');s.tr=tr;
+    tr.innerHTML='<td class="n"></td><td class="t"></td><td contenteditable></td><td class="x"><button title="Delete">×</button></td>';
+    const c=tr.children;
+    c[1].textContent=ts(s.s,'.').slice(0,-4);
+    c[1].onclick=()=>{$('media').currentTime=s.s;$('media').play()};
+    c[2].textContent=s.t;c[2].oninput=()=>s.t=c[2].textContent;
+    c[3].firstChild.onclick=()=>{subs.splice(subs.indexOf(s),1);tr.remove();renum()};
+    tb.appendChild(tr);
+  });
+  renum();
+}
+function renum(){subs.forEach((s,i)=>s.tr.children[0].textContent=i+1);$('s1').textContent=subs.length}
+$('q').oninput=()=>{const q=$('q').value.toLowerCase();subs.forEach(s=>s.tr.hidden=!!q&&!s.t.toLowerCase().includes(q))};
+$('media').ontimeupdate=()=>{
+  const m=$('media'),t=m.currentTime;let hit=null;
+  for(const s of subs){if(t>=s.s&&t<=s.e+.2){hit=s;break}}
+  subs.forEach(s=>s.tr.classList.toggle('act',s===hit));
+  if(hit&&!m.paused){const w=document.querySelector('.tw'),r=hit.tr;if(r.offsetTop<w.scrollTop+40||r.offsetTop>w.scrollTop+w.clientHeight-60)w.scrollTop=r.offsetTop-80}
+};
+
+function save(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type:type+';charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Saved '+name)}
+const base=()=>file?file.name.replace(/\.[^.]+$/,''):'subtitles';
+$('srt').onclick=()=>save(base()+'.srt',subs.map((s,i)=>`${i+1}\n${ts(s.s)} --> ${ts(s.e)}\n${s.t}\n`).join('\n'),'application/x-subrip');
+$('vtt').onclick=()=>save(base()+'.vtt','WEBVTT\n\n'+subs.map(s=>`${ts(s.s,'.')} --> ${ts(s.e,'.')}\n${s.t}\n`).join('\n'),'text/vtt');
+$('txt').onclick=()=>save(base()+'.txt',subs.map(s=>s.t).join('\n'),'text/plain');
+$('copy').onclick=()=>navigator.clipboard.writeText(subs.map(s=>s.t).join('\n')).then(()=>toast('Text copied'));
+</script>
+</body>
+</html>
