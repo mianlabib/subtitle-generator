@@ -128,12 +128,14 @@ footer b{color:var(--lime)}
       <label class="chk"><input type="checkbox" id="rem" checked> Remember on this device</label></div>
     <div class="f"><label for="lang">Spoken language</label>
       <select id="lang"><option value="auto">Auto-detect</option>
-        <option value="en">English</option><option value="ru">Russian</option><option value="hi">Hindi</option><option value="ur">Urdu</option>
+        <option value="en">English</option><option value="ru" selected>Russian</option><option value="hi">Hindi</option><option value="ur">Urdu</option>
         <option value="ar">Arabic</option><option value="tr">Turkish</option><option value="es">Spanish</option><option value="fr">French</option>
         <option value="de">German</option><option value="pt">Portuguese</option><option value="it">Italian</option><option value="nl">Dutch</option>
         <option value="ja">Japanese</option><option value="ko">Korean</option><option value="zh">Chinese</option></select></div>
     <div class="f"><label for="model">Model</label>
       <select id="model"><option value="nova-2" selected>Nova-2 · wider language support</option><option value="nova-3">Nova-3 · most accurate</option></select></div>
+    <div class="f"><label class="chk" style="margin:0;color:var(--ink);font-weight:600"><input type="checkbox" id="clean" checked> Clean noisy output</label>
+      <div class="hint">Removes repeated word loops and 1-letter junk lines. With Russian selected it also drops lines that contain no Cyrillic.</div></div>
     <div class="f two">
       <div><label for="maxc">Max characters</label><input id="maxc" type="number" value="42" min="15" max="120"></div>
       <div><label for="maxd">Max seconds</label><input id="maxd" type="number" value="6" min="2" max="15" step="0.5"></div></div>
@@ -146,7 +148,7 @@ footer b{color:var(--lime)}
 const $=id=>document.getElementById(id);
 let file=null,xhr=null,subs=[],meta={},url=null;
 const IDS=['lang','model','maxc','maxd'];
-try{const s=JSON.parse(localStorage.getItem('ss_cfg')||'{}');IDS.forEach(i=>{if(s[i])$(i).value=s[i]});if(s.key)$('key').value=s.key}catch(e){}
+try{const s=JSON.parse(localStorage.getItem('ss_cfg')||'{}');IDS.forEach(i=>{if(s[i])$(i).value=s[i]});if(s.key)$('key').value=s.key;if(s.clean===false)$('clean').checked=false}catch(e){}
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2000)}
 function status(m,c=''){const s=$('status');s.textContent=m;s.className=c}
@@ -162,7 +164,7 @@ $('open').onclick=openSet;$('open2').onclick=openSet;
 $('x').onclick=$('cancel').onclick=()=>dlg.close();
 $('eye').onclick=()=>{const k=$('key'),h=k.type==='password';k.type=h?'text':'password';$('eye').textContent=h?'Hide':'Show'};
 $('saveset').onclick=()=>{
-  try{const o={};IDS.forEach(i=>o[i]=$(i).value);if($('rem').checked)o.key=$('key').value.trim();localStorage.setItem('ss_cfg',JSON.stringify(o))}catch(e){}
+  try{const o={};IDS.forEach(i=>o[i]=$(i).value);o.clean=$('clean').checked;if($('rem').checked)o.key=$('key').value.trim();localStorage.setItem('ss_cfg',JSON.stringify(o))}catch(e){}
   chips();dlg.close();toast('Settings saved');
 };
 
@@ -194,6 +196,26 @@ function split(words,mc,md){
   flush();return out;
 }
 
+function dedupe(t){
+  const w=t.split(/\s+/).filter(Boolean),low=w.map(x=>x.toLowerCase().replace(/[.,!?;:]+$/,''));
+  for(let n=1;n<=5;n++){
+    for(let i=0;i+2*n<=w.length;i++){
+      let k=1;
+      while(i+(k+1)*n<=w.length&&low.slice(i+k*n,i+(k+1)*n).join(' ')===low.slice(i,i+n).join(' '))k++;
+      if(k>=3){w.splice(i+n,(k-1)*n);low.splice(i+n,(k-1)*n)}
+    }
+  }
+  return w.join(' ');
+}
+function cleanSubs(list,lang){
+  const L=/\p{L}/gu,cyr=/[\u0400-\u04FF]/,lat=/[A-Za-z]/;
+  return list.map(x=>({...x,t:dedupe(x.t)})).filter(x=>{
+    if((x.t.match(L)||[]).length<2)return false;
+    if(lang==='ru'&&lat.test(x.t)&&!cyr.test(x.t))return false;
+    return true;
+  });
+}
+
 $('go').onclick=()=>{
   const key=$('key').value.trim();
   if(!key){status('Add your Deepgram API key in Settings first.','err');openSet();return}
@@ -217,8 +239,11 @@ $('go').onclick=()=>{
     const ch=j.results.channels[0],words=ch.alternatives[0].words||[];
     if(!words.length){status('No speech was detected in this file.','err');return}
     subs=split(words,+$('maxc').value||42,+$('maxd').value||6);
+    const before=subs.length;
+    if($('clean').checked)subs=cleanSubs(subs,lang);
+    if(!subs.length){status('Only noise was detected. Check the language, or try Nova-3.','err');return}
     meta={words:words.length,dur:(j.metadata&&j.metadata.duration)||words[words.length-1].end,lang:ch.detected_language||(lang==='auto'?'–':lang)};
-    render();status('Done. '+subs.length+' subtitles generated.','ok');toast('Subtitles ready');
+    render();status('Done. '+subs.length+' subtitles generated'+(before>subs.length?' ('+(before-subs.length)+' noisy lines removed)':'')+'.','ok');toast('Subtitles ready');
   };
   xhr.send(file);
 };
